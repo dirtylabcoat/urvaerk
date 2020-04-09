@@ -2,7 +2,6 @@ package storage
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -17,12 +16,6 @@ type TxtHandler struct {
 type TasksAndTime struct {
 	Tasks int
 	Time  int
-}
-
-func (txt TxtHandler) Create(projectName string) error {
-	// Check that project doesn't already exist
-	fmt.Println("Create TXT", projectName, txt.Filename)
-	return nil
 }
 
 func (txt TxtHandler) Add(time PieceOfTime) error {

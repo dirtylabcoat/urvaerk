@@ -15,7 +15,6 @@ type ProjectSummary struct {
 
 // TimeHandler - perform CRUD on pieces of time
 type TimeHandler interface {
-	Create(projectName string) error
 	Add(time PieceOfTime) error
 	// Remove(projectName string, taskName string) error
 	GetProjects() []ProjectSummary

@@ -7,11 +7,6 @@ type SqliteHandler struct {
 	Filename string
 }
 
-func (sqlite SqliteHandler) Create(projectName string) error {
-	fmt.Println("Create DB", projectName)
-	return nil
-}
-
 func (sqlite SqliteHandler) Add(time PieceOfTime) error {
 	fmt.Println("sql3 Add time", time.AmountInMin, "to task", time.Task, "in project", time.Project, "in file", sqlite.Filename)
 	return nil

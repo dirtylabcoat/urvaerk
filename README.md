@@ -4,15 +4,12 @@ A simple time keeping CLI tool. Use for easy time reporting and such.
 The name is a pun. The word "urverk" in Swedish (my native language) means "clockwork", but the word "värk" (ae = ä) means "pain", because nobody likes time reporting :-)
 
 Usage:
-
-	urvaerk create "My Project"
-	Creates a project called "My Project".
 	
 	urvaerk add "My Project" "some task" 60
-	Adds 60 minutes to the task "some task" in "My Project". If "some task" doesn't exist, it will be created.
+	Adds 60 minutes to the task "some task" in "My Project". If the project or the task doesn't exist, it will be created.
 	
 	urvaerk add "My Project" 30
-	Adds 30 minutes to "My Project" without putting it on a specific task (sort of, it's actually put on the task "My Project")
+	Adds 30 minutes to "My Project" without putting it on a specific task (sort of, it's actually put on the task "My Project"). If the project doesn't exist it will be created.
 	
 	urvaerk remove "My Project" "some task"
 	Removes the task "some task" in "My Project".

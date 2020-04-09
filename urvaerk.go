@@ -52,14 +52,6 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			&cli.Command{
-				Name:        "create",
-				Aliases:     []string{"c"},
-				Usage:       "Create project",
-				UsageText:   "doo - does the dooing",
-				Description: "no really, there is a lot of dooing to be done",
-				Action:      create,
-			},
-			&cli.Command{
 				Name:        "add",
 				Aliases:     []string{"a"},
 				Usage:       "Add time to task in project",
@@ -106,12 +98,6 @@ func main() {
 	}
 }
 
-func create(c *cli.Context) error {
-	fmt.Printf("Create %q\n", c.Args().Get(0))
-	storageHandler.Create(c.Args().Get(0))
-	return nil
-}
-
 func add(c *cli.Context) error {
 	project := c.Args().Get(0)
 	var task string
@@ -137,32 +123,18 @@ func remove(c *cli.Context) error {
 
 func show(c *cli.Context) error {
 	if c.Args().Len() == 0 {
-		projects := getProjectSummaries()
+		projects := storageHandler.GetProjects()
 		for _, p := range projects {
 			fmt.Printf("%s : %d tasks : %d minutes\n", p.Project, p.NumOfTasks, p.TotalTime)
 		}
 	} else if c.Args().Len() == 1 {
-		projectSummary := getProjectSummary(c.Args().Get(0))
+		projectSummary := storageHandler.GetProject(c.Args().Get(0))
 		for _, p := range projectSummary {
 			fmt.Printf("%s : %d minutes\n", p.Task, p.AmountInMin)
 		}
 	} else if c.Args().Len() == 2 {
-		taskSummary := getTaskSummary(c.Args().Get(0), c.Args().Get(1))
+		taskSummary := storageHandler.GetTask(c.Args().Get(0), c.Args().Get(1))
 		fmt.Printf("%s : %s : %d minutes\n", taskSummary.Project, taskSummary.Task, taskSummary.AmountInMin)
 	}
 	return nil
-}
-
-func getProjectSummaries() []storage.ProjectSummary {
-	return storageHandler.GetProjects()
-}
-
-func getProjectSummary(project string) []storage.PieceOfTime {
-	projectSummary := storageHandler.GetProject(project)
-	return projectSummary
-}
-
-func getTaskSummary(project string, task string) storage.PieceOfTime {
-	taskSummary := storageHandler.GetTask(project, task)
-	return taskSummary
 }
