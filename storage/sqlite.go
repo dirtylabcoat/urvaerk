@@ -7,8 +7,24 @@ type SqliteHandler struct {
 	Filename string
 }
 
-// Create - create new project or task in database
-func (sqlite SqliteHandler) Create(projectName string, taskName string) error {
-	fmt.Println("Create DB", projectName, taskName)
+func (sqlite SqliteHandler) Create(projectName string) error {
+	fmt.Println("Create DB", projectName)
 	return nil
+}
+
+func (sqlite SqliteHandler) Add(time PieceOfTime) error {
+	fmt.Println("sql3 Add time", time.AmountInMin, "to task", time.Task, "in project", time.Project, "in file", sqlite.Filename)
+	return nil
+}
+
+func (sqlite SqliteHandler) GetProjects() []ProjectSummary {
+	return nil
+}
+
+func (sqlite SqliteHandler) GetProject(project string) []PieceOfTime {
+	return nil
+}
+
+func (sqlite SqliteHandler) GetTask(project string, task string) PieceOfTime {
+	return PieceOfTime{}
 }

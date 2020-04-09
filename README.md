@@ -8,11 +8,11 @@ Usage:
 	urvaerk create "My Project"
 	Creates a project called "My Project".
 	
-	urvaerk add "My Project" "some task" 1h
-	Adds one hour to the task "some task" in "My Project". If "some task" doesn't exist, it will be created.
+	urvaerk add "My Project" "some task" 60
+	Adds 60 minutes to the task "some task" in "My Project". If "some task" doesn't exist, it will be created.
 	
-	urvaerk add "My Project" 30m
-	Adds thirty minutes to "My Project" without putting it on a specific task (sort of, it's actually put on the task "My Project")
+	urvaerk add "My Project" 30
+	Adds 30 minutes to "My Project" without putting it on a specific task (sort of, it's actually put on the task "My Project")
 	
 	urvaerk remove "My Project" "some task"
 	Removes the task "some task" in "My Project".

@@ -4,15 +4,21 @@ package storage
 type PieceOfTime struct {
 	Project     string
 	Task        string
-	AmountInMin int32
+	AmountInMin int
+}
+
+type ProjectSummary struct {
+	Project    string
+	NumOfTasks int
+	TotalTime  int
 }
 
 // TimeHandler - perform CRUD on pieces of time
 type TimeHandler interface {
-	Create(projectName string, taskName string) error
-	// Add(time PieceOfTime) error
+	Create(projectName string) error
+	Add(time PieceOfTime) error
 	// Remove(projectName string, taskName string) error
-	// GetAllProjects() []string
-	// GetProject(name string) []PieceOfTime
-	// GetTask(name string) []PieceOfTime
+	GetProjects() []ProjectSummary
+	GetProject(projectName string) []PieceOfTime
+	GetTask(projectName string, taskName string) PieceOfTime
 }

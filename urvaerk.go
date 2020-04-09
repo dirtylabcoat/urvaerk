@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"strconv"
 	"time"
 
 	"dirtylabcoat.org/urvaerk/storage"
@@ -14,11 +15,6 @@ import (
 var storageHandler storage.TimeHandler
 
 func main() {
-	pieceOfTime := storage.PieceOfTime{
-		Project:     "My Project",
-		Task:        "some task",
-		AmountInMin: 60,
-	}
 	usr, _ := user.Current()
 	storageType := "txt"
 	txtDefaultFile := usr.HomeDir + "/.urvaerk.dat"
@@ -100,7 +96,6 @@ func main() {
 				}
 				storageHandler = storage.SqliteHandler{Filename: storageFilename}
 			}
-			fmt.Println(storageHandler)
 			return nil
 		},
 	}
@@ -109,18 +104,29 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(pieceOfTime)
-
 }
 
 func create(c *cli.Context) error {
 	fmt.Printf("Create %q\n", c.Args().Get(0))
-	storageHandler.Create(c.Args().Get(0), c.Args().Get(1))
+	storageHandler.Create(c.Args().Get(0))
 	return nil
 }
 
 func add(c *cli.Context) error {
-	fmt.Printf("Add %q %q %q\n", c.Args().Get(0), c.Args().Get(1), c.Args().Get(2))
+	project := c.Args().Get(0)
+	var task string
+	var time int
+	if c.Args().Len() == 2 {
+		task = project
+		time, _ = strconv.Atoi(c.Args().Get(1))
+	} else if c.Args().Len() == 3 {
+		task = c.Args().Get(1)
+		time, _ = strconv.Atoi(c.Args().Get(2))
+	} else {
+		log.Fatal("Command add takes 2 or 3 arguments.")
+	}
+	timePiece := storage.PieceOfTime{Project: project, Task: task, AmountInMin: time}
+	storageHandler.Add(timePiece)
 	return nil
 }
 
@@ -130,6 +136,33 @@ func remove(c *cli.Context) error {
 }
 
 func show(c *cli.Context) error {
-	fmt.Printf("Show %q %q\n", c.Args().Get(0), c.Args().Get(1))
+	if c.Args().Len() == 0 {
+		projects := getProjectSummaries()
+		for _, p := range projects {
+			fmt.Printf("%s : %d tasks : %d minutes\n", p.Project, p.NumOfTasks, p.TotalTime)
+		}
+	} else if c.Args().Len() == 1 {
+		projectSummary := getProjectSummary(c.Args().Get(0))
+		for _, p := range projectSummary {
+			fmt.Printf("%s : %d minutes\n", p.Task, p.AmountInMin)
+		}
+	} else if c.Args().Len() == 2 {
+		taskSummary := getTaskSummary(c.Args().Get(0), c.Args().Get(1))
+		fmt.Printf("%s : %s : %d minutes\n", taskSummary.Project, taskSummary.Task, taskSummary.AmountInMin)
+	}
 	return nil
+}
+
+func getProjectSummaries() []storage.ProjectSummary {
+	return storageHandler.GetProjects()
+}
+
+func getProjectSummary(project string) []storage.PieceOfTime {
+	projectSummary := storageHandler.GetProject(project)
+	return projectSummary
+}
+
+func getTaskSummary(project string, task string) storage.PieceOfTime {
+	taskSummary := storageHandler.GetTask(project, task)
+	return taskSummary
 }
