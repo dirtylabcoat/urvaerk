@@ -7,6 +7,7 @@ type PieceOfTime struct {
 	AmountInMin int
 }
 
+// ProjectSummary - a summary of an existing project
 type ProjectSummary struct {
 	Project    string
 	NumOfTasks int
@@ -16,8 +17,8 @@ type ProjectSummary struct {
 // TimeHandler - perform CRUD on pieces of time
 type TimeHandler interface {
 	Add(time PieceOfTime) error
-	// Remove(projectName string, taskName string) error
+	// Remove(project string, task string) error
 	GetProjects() []ProjectSummary
-	GetProject(projectName string) []PieceOfTime
-	GetTask(projectName string, taskName string) PieceOfTime
+	GetProject(project string) []PieceOfTime
+	GetTask(project string, task string) PieceOfTime
 }

@@ -22,7 +22,8 @@ func main() {
 	storageFilename := ""
 	app := &cli.App{
 		Name:        "urvaerk",
-		Version:     "20200329",
+		Usage:       "simple time keeping",
+		Version:     "0.1-SNAPSHOT",
 		Compiled:    time.Now(),
 		UsageText:   "",
 		Description: "A simple time keeping CLI tool",
@@ -54,7 +55,7 @@ func main() {
 			&cli.Command{
 				Name:        "add",
 				Aliases:     []string{"a"},
-				Usage:       "Add time to task in project",
+				Usage:       "Add time to task in project, creates project/task if it doesn't exist",
 				UsageText:   "add - does the adding",
 				Description: "no really, there is a lot of adding to be done",
 				Action:      add,
@@ -69,7 +70,7 @@ func main() {
 			},
 			&cli.Command{
 				Name:        "show",
-				Aliases:     []string{"rm"},
+				Aliases:     []string{"ls", "list"},
 				Usage:       "Show projects and tasks",
 				UsageText:   "show - does the showing",
 				Description: "no really, there is a lot of showing to be done",

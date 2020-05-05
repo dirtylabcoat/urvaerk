@@ -13,11 +13,13 @@ type TxtHandler struct {
 	Filename string
 }
 
+// TasksAndTime - ...
 type TasksAndTime struct {
 	Tasks int
 	Time  int
 }
 
+// Add - add time to a task on a project
 func (txt TxtHandler) Add(time PieceOfTime) error {
 	fileHandle, err := os.OpenFile(txt.Filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -31,6 +33,12 @@ func (txt TxtHandler) Add(time PieceOfTime) error {
 	return nil
 }
 
+// Remove - remove task or project
+func (txt TxtHandler) Remove(projectName string, taskName string) error {
+	return nil
+}
+
+// GetProjects - ...
 func (txt TxtHandler) GetProjects() []ProjectSummary {
 	fileHandle, err := os.Open(txt.Filename)
 	if err != nil {
@@ -58,6 +66,7 @@ func (txt TxtHandler) GetProjects() []ProjectSummary {
 	return projectSummaries
 }
 
+// GetProject - ...
 func (txt TxtHandler) GetProject(project string) []PieceOfTime {
 	fileHandle, err := os.Open(txt.Filename)
 	if err != nil {
@@ -80,6 +89,7 @@ func (txt TxtHandler) GetProject(project string) []PieceOfTime {
 	return piecesOfTime
 }
 
+// GetTask - ...
 func (txt TxtHandler) GetTask(project string, task string) PieceOfTime {
 	fileHandle, err := os.Open(txt.Filename)
 	if err != nil {
