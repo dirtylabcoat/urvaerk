@@ -34,7 +34,39 @@ func (txt TxtHandler) Add(time PieceOfTime) error {
 }
 
 // Remove - remove task or project
-func (txt TxtHandler) Remove(projectName string, taskName string) error {
+func (txt TxtHandler) Remove(project string, task string) error {
+	tmpFilename := txt.Filename + ".tmp"
+	rm := project + ";"
+	if len(task) != 0 {
+		rm = rm + task + ";"
+	}
+	fileHandle, err := os.Open(txt.Filename)
+	if err != nil {
+		log.Fatalf("Failed to open file: %s", err)
+	}
+	// File handle for tmp-file
+	newFileHandle, err := os.OpenFile(tmpFilename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	linesRemoved := 0
+	scanner := bufio.NewScanner(fileHandle)
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if !strings.HasPrefix(line, rm) {
+			if _, err := newFileHandle.WriteString(line + "\n"); err != nil {
+				log.Println(err)
+			}
+		} else {
+			linesRemoved++
+		}
+	}
+	defer fileHandle.Close()
+	defer newFileHandle.Close()
+	if linesRemoved > 0 {
+		os.Rename(tmpFilename, txt.Filename)
+	}
 	return nil
 }
 

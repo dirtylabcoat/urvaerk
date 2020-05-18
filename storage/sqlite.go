@@ -7,6 +7,11 @@ type SqliteHandler struct {
 	Filename string
 }
 
+// Remove - ...
+func (sqlite SqliteHandler) Remove(project string, task string) error {
+	return nil
+}
+
 // Add - ...
 func (sqlite SqliteHandler) Add(time PieceOfTime) error {
 	fmt.Println("sql3 Add time", time.AmountInMin, "to task", time.Task, "in project", time.Project, "in file", sqlite.Filename)

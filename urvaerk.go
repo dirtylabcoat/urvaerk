@@ -119,6 +119,7 @@ func add(c *cli.Context) error {
 
 func remove(c *cli.Context) error {
 	fmt.Printf("Remove %q %q\n", c.Args().Get(0), c.Args().Get(1))
+	storageHandler.Remove(c.Args().Get(0), c.Args().Get(1))
 	return nil
 }
 
