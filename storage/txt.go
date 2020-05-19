@@ -66,6 +66,8 @@ func (txt TxtHandler) Remove(project string, task string) error {
 	defer newFileHandle.Close()
 	if linesRemoved > 0 {
 		os.Rename(tmpFilename, txt.Filename)
+	} else {
+		os.Remove(tmpFilename)
 	}
 	return nil
 }

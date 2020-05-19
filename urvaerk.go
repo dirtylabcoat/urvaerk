@@ -23,7 +23,7 @@ func main() {
 	app := &cli.App{
 		Name:        "urvaerk",
 		Usage:       "simple time keeping",
-		Version:     "0.1-SNAPSHOT",
+		Version:     "0.1",
 		Compiled:    time.Now(),
 		UsageText:   "",
 		Description: "A simple time keeping CLI tool",

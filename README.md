@@ -35,3 +35,5 @@ Parameters:
 	
 
 If you decide to use an SQLite3 database for storage you can create and initialize such a database-file with the supplied script *initdb.sh*.
+
+***NOTE: Database storage is currently not implemented.***
