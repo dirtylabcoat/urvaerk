@@ -5,6 +5,12 @@ The name is a pun. The word "urverk" in Swedish (my native language) means "cloc
 
 Usage:
 	
+	urvaerk start "My Project" "some task"
+	Start time counting on a task in a project. If the project or the task doesn't exist, it will be created. If there is a time count going on on another task this will be stopped and time recorded before starting the time count on the new task.
+	
+	urvaerk stop
+	Stop time counting on current task in a project and record the time counted.
+	
 	urvaerk add "My Project" "some task" 60
 	Adds 60 minutes to the task "some task" in "My Project". If the project or the task doesn't exist, it will be created.
 	
@@ -25,7 +31,6 @@ Usage:
 
 	urvaerk show "My Project" "some task"
 	Shows all the time entries for a task in a project.
-
 
 Parameters:
 
