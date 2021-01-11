@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"os/user"
 	"strconv"
+	"strings"
 	"time"
 
 	"dirtylabcoat.org/urvaerk/storage"
@@ -67,7 +70,7 @@ func main() {
 				Aliases:     []string{"p"},
 				Usage:       "Stop counting time on current task and record the time counted",
 				UsageText:   "stop - stop counting time",
-				Description: "no really, there is a lot of adding to be done",
+				Description: "no really, there is a lot of stopping to be done",
 				Action:      stop,
 			},
 			&cli.Command{
@@ -143,6 +146,35 @@ func start(c *cli.Context) error {
 }
 
 func stop(c *cli.Context) error {
+	// Read file
+	fileHandle, err := os.Open(timerLockFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fileHandle.Close()
+	scanner := bufio.NewScanner(fileHandle)
+	scanner.Split(bufio.ScanLines)
+	scanner.Scan()
+	line := scanner.Text()
+	// Parse info
+	pieces := strings.Split(line, ";")
+	if len(pieces) != 3 {
+		log.Fatal("Invalid file format")
+	}
+	project := pieces[0]
+	task := pieces[1]
+	now := time.Now().Unix()
+	secsSpent, _ := strconv.Atoi(pieces[2])
+	diffSeconds := now - int64(secsSpent)
+	mins := int(math.Ceil(float64(diffSeconds) / float64(60)))
+	// Use add method
+	timePiece := storage.PieceOfTime{Project: project, Task: task, AmountInMin: mins}
+	storageHandler.Add(timePiece);
+	// Delete file
+	removeErr := os.Remove(timerLockFile)
+	if removeErr != nil {
+		log.Fatal(removeErr)
+	}
 	return nil
 }
 
