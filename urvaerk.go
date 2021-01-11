@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"os/user"
 	"strconv"
+	"strings"
 	"time"
 
 	"dirtylabcoat.org/urvaerk/storage"
@@ -36,12 +39,12 @@ func main() {
 				Email: "fighterhayabusa@dirtylabcoat.org",
 			},
 		},
-		Copyright: "(c) 2020 Fighter Hayabusa <fighterhayabusa@dirtylabcoat.org>",
+		Copyright: "(c) 2020-2021 Fighter Hayabusa <fighterhayabusa@dirtylabcoat.org>",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "storage",
 				Aliases:     []string{"s"},
-				Usage:       "Use `TYPE` for storage. Choose between text-format (txt) or SQLite3 (sql3). Default is 'txt'.",
+				Usage:       "Use `TYPE` for storage. Choose between text-format (txt) or SQLite3 (sql3).",
 				Value:       "txt",
 				Destination: &storageType,
 			},
@@ -67,7 +70,7 @@ func main() {
 				Aliases:     []string{"p"},
 				Usage:       "Stop counting time on current task and record the time counted",
 				UsageText:   "stop - stop counting time",
-				Description: "no really, there is a lot of adding to be done",
+				Description: "no really, there is a lot of stopping to be done",
 				Action:      stop,
 			},
 			&cli.Command{
@@ -127,22 +130,55 @@ func start(c *cli.Context) error {
 	} else {
 		log.Fatal("Command add takes 1 or 2 arguments.")
 	}
+	// Check if there is a running task, if yes, stop it
+	if _, err := os.Stat(timerLockFile); err == nil {
+		stop(c)
+	}
 	// Create project/task
 	timePiece := storage.PieceOfTime{Project: project, Task: task, AmountInMin: 0}
 	storageHandler.Add(timePiece)
 	fileHandle, err := os.OpenFile(timerLockFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	defer fileHandle.Close()
 	line := project + ";" + task + ";" + strconv.FormatInt(time.Now().Unix(), 10) + "\n"
 	if _, err := fileHandle.WriteString(line); err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	return nil
 }
 
 func stop(c *cli.Context) error {
+	// Read file
+	fileHandle, err := os.Open(timerLockFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer fileHandle.Close()
+	scanner := bufio.NewScanner(fileHandle)
+	scanner.Split(bufio.ScanLines)
+	scanner.Scan()
+	line := scanner.Text()
+	// Parse info
+	pieces := strings.Split(line, ";")
+	if len(pieces) != 3 {
+		log.Fatal("Invalid file format")
+	}
+	project := pieces[0]
+	task := pieces[1]
+	now := time.Now().Unix()
+	secsSpent, _ := strconv.Atoi(pieces[2])
+	diffSeconds := now - int64(secsSpent)
+	mins := int(math.Ceil(float64(diffSeconds) / float64(60)))
+	// Use add method
+	timePiece := storage.PieceOfTime{Project: project, Task: task, AmountInMin: mins}
+	storageHandler.Add(timePiece);
+	// Delete file
+	removeErr := os.Remove(timerLockFile)
+	if removeErr != nil {
+		log.Fatal(removeErr)
+	}
 	return nil
 }
 
