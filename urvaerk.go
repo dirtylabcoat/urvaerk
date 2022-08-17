@@ -17,6 +17,7 @@ var storageHandler storage.TimeHandler
 func main() {
 	usr, _ := user.Current()
 	storageType := "txt"
+	timeCountFile := usr.HomeDir + "/.urvaerk_timecount.dat"
 	txtDefaultFile := usr.HomeDir + "/.urvaerk.dat"
 	sql3DefaultFile := usr.HomeDir + "/.urvaerk.db"
 	storageFilename := ""
@@ -52,6 +53,22 @@ func main() {
 			},
 		},
 		Commands: []*cli.Command{
+			&cli.Command{
+				Name:        "start",
+				Aliases:     []string{"s"},
+				Usage:       "Start counting time on task in project, creates project/task if it doesn't exist",
+				UsageText:   "start - start counting time",
+				Description: "no really, there is a lot of starting to be done",
+				Action:      start,
+			},
+			&cli.Command{
+				Name:        "stop",
+				Aliases:     []string{"p"},
+				Usage:       "Stop counting time on current task and record the time counted",
+				UsageText:   "stop - stop counting time",
+				Description: "no really, there is a lot of adding to be done",
+				Action:      stop,
+			},
 			&cli.Command{
 				Name:        "add",
 				Aliases:     []string{"a"},
@@ -97,6 +114,23 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func start(c *cli.Context) error {
+	project := c.Args().Get(0)
+	var task string
+	if c.Args().Len() == 1 {
+		task = project
+	} else if c.Args().Len() == 2 {
+		task = c.Args().Get(1)
+	} else {
+		log.Fatal("Command add takes 1 or 2 arguments.")
+	}
+	return nil
+}
+
+func stop(c *cli.Context) error {
+	return nil
 }
 
 func add(c *cli.Context) error {
