@@ -12,12 +12,13 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var timerLockFile string
 var storageHandler storage.TimeHandler
 
 func main() {
 	usr, _ := user.Current()
 	storageType := "txt"
-	timeCountFile := usr.HomeDir + "/.urvaerk_timecount.dat"
+	timerLockFile = usr.HomeDir + "/.urvaerk_timer.lock"
 	txtDefaultFile := usr.HomeDir + "/.urvaerk.dat"
 	sql3DefaultFile := usr.HomeDir + "/.urvaerk.db"
 	storageFilename := ""
@@ -125,6 +126,18 @@ func start(c *cli.Context) error {
 		task = c.Args().Get(1)
 	} else {
 		log.Fatal("Command add takes 1 or 2 arguments.")
+	}
+	// Create project/task
+	timePiece := storage.PieceOfTime{Project: project, Task: task, AmountInMin: 0}
+	storageHandler.Add(timePiece)
+	fileHandle, err := os.OpenFile(timerLockFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer fileHandle.Close()
+	line := project + ";" + task + ";" + strconv.FormatInt(time.Now().Unix(), 10) + "\n"
+	if _, err := fileHandle.WriteString(line); err != nil {
+		log.Println(err)
 	}
 	return nil
 }
